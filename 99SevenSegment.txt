@@ -1,0 +1,149 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 08.08.2017 10:34:28
+-- Design Name: 
+-- Module Name: Main - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity SevenSeg2 is
+  Port ( clk1 :in std_logic;
+         sevseg: out std_logic_vector(6 downto 0);
+         EN: out std_logic_vector(3 downto 0)
+         
+  
+   );
+end SevenSeg2;
+
+architecture Behavioral of SevenSeg2 is
+    
+    signal leds: std_logic_vector (6 downto 0);
+    signal count : integer :=1;
+    signal sayac : integer :=0;
+    signal clk2 : std_logic :='0';
+    signal dongec: integer:=0;
+    signal birinciBasamak: integer:=0;
+    signal ikinciBasamak:integer:=0;
+
+begin
+
+process(clk1) 
+
+begin
+    if(clk1'event and clk1='1') then
+        count <=count+1;
+        dongec<=dongec+1;
+            if(count = 50000000) then
+                clk2 <= not clk2;
+                count <=1;
+                
+             end if;
+     end if;
+    
+    if (clk2'event and clk2='1') then
+        sayac<=sayac+1;
+    
+            if (sayac = 100) then
+                sayac<=0;
+            end if;
+    end if;
+    
+    if( dongec = 250000) then 
+    birinciBasamak <= 0;
+    ikinciBasamak<=1;
+    end if;
+    if(dongec = 500000) then
+    birinciBasamak<=1;
+    ikinciBasamak<=0;
+    dongec<=0;
+    end if;
+   if(clk1'event and clk1='1') then
+   
+        if( birinciBasamak=1) then
+                 if ((sayac mod 10)= 0) then
+                        leds <="0111111";
+                 elsif ((sayac mod 10) =1) then
+                         leds <="0000110";
+                 elsif ( (sayac mod 10) =2) then
+                         leds <="1011011";
+                elsif ( (sayac mod 10) =3) then
+                         leds <="1001111";
+                elsif ( (sayac mod 10) =4) then
+                         leds <="1100110";
+                elsif ((sayac mod 10) =5) then
+                         leds <= "1101101";
+                elsif( (sayac mod 10) =6) then
+                         leds <= "1111101";
+                elsif( (sayac mod 10) =7) then
+                         leds <= "0000111";
+                elsif( (sayac mod 10) =8) then
+                         leds <= "1111111";
+                elsif ( (sayac mod 10) =9) then
+                        leds <="1101111";
+                end if;
+               
+                EN<="1110";
+                sevseg <= not (leds);
+                
+                
+                
+        end if;
+        if( ikinciBasamak =1) then
+                        
+                        if ((sayac / 10) =1 and sayac> 9) then
+                                 leds <="0000110";
+                        elsif ( (sayac / 10) =2 and sayac > 9) then
+                                 leds <="1011011";
+                        elsif ( (sayac / 10) =3 and sayac >9 ) then
+                                 leds <="1001111";
+                        elsif ( (sayac / 10) =4 and sayac > 9) then
+                                 leds <="1100110";
+                        elsif ((sayac / 10) =5 and sayac > 9) then
+                                 leds <= "1101101";
+                        elsif( (sayac / 10) =6 and sayac > 9) then
+                                 leds <= "1111101";
+                        elsif( (sayac / 10) =7 and sayac > 9) then
+                                 leds <= "0000111";
+                        elsif( (sayac / 10) =8 and sayac > 9) then
+                                 leds <= "1111111";
+                        elsif ( (sayac / 10) =9  and sayac >9) then
+                                leds <="1101111";
+                        elsif(sayac < 10) then
+                                leds <="0111111";
+                        end if;
+                       
+                        EN<="1101";
+                        sevseg <= not (leds);
+        
+        end if;
+   
+   end if;
+    
+    
+end process;
+end Behavioral;
